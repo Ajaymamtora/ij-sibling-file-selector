@@ -1,8 +1,30 @@
+<?xml version="1.0" encoding="UTF-8"?>
 <idea-plugin>
     <id>com.github.ajaymamtora.ijsiblingfileselector</id>
     <name>ij-sibling-file-selector</name>
-    <vendor>ajaymamtora</vendor>
+    <vendor url="https://github.com/ajaymamtora">ajaymamtora</vendor>
+
+    <description><![CDATA[
+        <h2>Sibling File Selector</h2>
+        <p>A productivity enhancement plugin that allows quick navigation between files in the same directory (sibling files).</p>
+
+        <h3>Features:</h3>
+        <ul>
+            <li><b>Quick Navigation:</b> Easily move between files in the current directory using keyboard shortcuts</li>
+            <li><b>File List View:</b> Quick access to all sibling files through a popup list</li>
+            <li><b>Intuitive Shortcuts:</b> Natural keyboard mappings for previous/next navigation</li>
+        </ul>
+
+        <h3>Default Keyboard Shortcuts:</h3>
+        <ul>
+            <li><b>⌘⌥→</b> (Command + Alt + Right): Select next file in directory</li>
+            <li><b>⌘⌥←</b> (Command + Alt + Left): Select previous file in directory</li>
+            <li><b>⌘⌥P</b> (Command + Alt + P): Show list of all sibling files</li>
+        </ul>
+    ]]></description>
+
     <depends>com.intellij.modules.platform</depends>
+
     <actions>
         <action id="SelectNextFile"
                 class="com.github.ajaymamtora.ijsiblingfileselector.SelectNextFileAction"
