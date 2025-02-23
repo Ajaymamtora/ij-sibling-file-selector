@@ -3,21 +3,22 @@ package com.github.ajaymamtora.ijsiblingfileselector
 import com.intellij.openapi.actionSystem.AnAction
 import com.intellij.openapi.actionSystem.AnActionEvent
 import com.intellij.openapi.actionSystem.CommonDataKeys
-import com.intellij.openapi.fileEditor.FileEditorManager
 import com.intellij.openapi.project.Project
-import com.intellij.openapi.ui.popup.JBPopup
 import com.intellij.openapi.ui.popup.JBPopupFactory
+import com.intellij.openapi.ui.popup.ListPopup
 import com.intellij.openapi.vfs.VirtualFile
+import com.intellij.openapi.fileEditor.FileEditorManager
+import com.intellij.openapi.ui.popup.JBPopup
 import com.intellij.ui.components.JBList
 import com.intellij.ui.components.JBScrollPane
 import com.intellij.ui.components.JBTextField
+import javax.swing.DefaultListModel
+import javax.swing.JPanel
 import java.awt.BorderLayout
+import javax.swing.ListCellRenderer
+import javax.swing.JLabel
 import java.awt.event.KeyAdapter
 import java.awt.event.KeyEvent
-import javax.swing.DefaultListModel
-import javax.swing.JLabel
-import javax.swing.JPanel
-import javax.swing.ListCellRenderer
 
 class ShowSiblingFilesAction : AnAction() {
     override fun actionPerformed(e: AnActionEvent) {
@@ -41,6 +42,7 @@ class ShowSiblingFilesAction : AnAction() {
                     foreground = if (isSelected) list.selectionForeground else list.foreground
                 }
             }
+            selectedIndex = 0 // Ensure the first item is selected initially
         }
 
         val searchField = JBTextField().apply {
@@ -51,6 +53,27 @@ class ShowSiblingFilesAction : AnAction() {
                     listModel.clear()
                     siblingFiles.filter { it.name.lowercase().contains(query) }
                         .forEach { listModel.addElement(it) }
+                    if (listModel.size() > 0) {
+                        fileList.selectedIndex = 0 // Reset selection after filtering
+                    }
+                }
+
+                override fun keyPressed(e: KeyEvent) {
+                    when (e.keyCode) {
+                        KeyEvent.VK_DOWN -> {
+                            val nextIndex = (fileList.selectedIndex + 1).coerceAtMost(listModel.size() - 1)
+                            fileList.selectedIndex = nextIndex
+                        }
+                        KeyEvent.VK_UP -> {
+                            val prevIndex = (fileList.selectedIndex - 1).coerceAtLeast(0)
+                            fileList.selectedIndex = prevIndex
+                        }
+                        KeyEvent.VK_ENTER -> {
+                            fileList.selectedValue?.let { selectedFile ->
+                                openFile(project, selectedFile)
+                            }
+                        }
+                    }
                 }
             })
         }
@@ -68,14 +91,6 @@ class ShowSiblingFilesAction : AnAction() {
             .setMovable(true)
             .setRequestFocus(true)
             .createPopup()
-
-        fileList.addListSelectionListener {
-            if (!fileList.isSelectionEmpty) {
-                val selectedFile = fileList.selectedValue
-                openFile(project, selectedFile)
-                popup.closeOk(null)
-            }
-        }
 
         popup.showCenteredInCurrentWindow(project)
     }
