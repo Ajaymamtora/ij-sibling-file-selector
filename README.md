@@ -17,11 +17,20 @@
 - [ ] Click the <kbd>Watch</kbd> button on the top of the [IntelliJ Platform Plugin Template][template] to be notified about releases containing new features and fixes.
 
 <!-- Plugin description -->
-This Fancy IntelliJ Platform Plugin is going to be your implementation of the brilliant ideas that you have.
+## Sibling File Selector
 
-This specific section is a source for the [plugin.xml](/src/main/resources/META-INF/plugin.xml) file which will be extracted by the [Gradle](/build.gradle.kts) during the build process.
+A lightweight plugin that allows quick navigation between files in the same directory (sibling files).
 
-To keep everything working, do not remove `<!-- ... -->` sections. 
+### Features:
+
+* **Quick Navigation:** Easily move between files in the current directory using keyboard shortcuts
+* **File List View:** Quick access to all sibling files through a popup list
+
+### Default Keyboard Shortcuts:
+
+* **⌘⌥→** (Command + Alt + Right): Select next file in directory
+* **⌘⌥←** (Command + Alt + Left): Select previous file in directory
+* **⌘⌥P** (Command + Alt + P): Show list of all sibling files
 <!-- Plugin description end -->
 
 ## Installation
