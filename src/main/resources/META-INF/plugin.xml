@@ -1,24 +1,26 @@
-<!-- Plugin Configuration File. Read more: https://plugins.jetbrains.com/docs/intellij/plugin-configuration-file.html -->
 <idea-plugin>
     <id>com.github.ajaymamtora.ijsiblingfileselector</id>
     <name>ij-sibling-file-selector</name>
     <vendor>ajaymamtora</vendor>
-
     <depends>com.intellij.modules.platform</depends>
-
     <actions>
         <action id="SelectNextFile"
                 class="com.github.ajaymamtora.ijsiblingfileselector.SelectNextFileAction"
                 text="Select Next File"
                 description="Select the next file in the current directory">
-            <keyboard-shortcut first-keystroke="alt RIGHT" keymap="$default"/>
+            <keyboard-shortcut first-keystroke="meta alt RIGHT" keymap="$default"/>
         </action>
-
         <action id="SelectPreviousFile"
                 class="com.github.ajaymamtora.ijsiblingfileselector.SelectPreviousFileAction"
                 text="Select Previous File"
                 description="Select the previous file in the current directory">
-            <keyboard-shortcut first-keystroke="alt LEFT" keymap="$default"/>
+            <keyboard-shortcut first-keystroke="meta alt LEFT" keymap="$default"/>
+        </action>
+        <action id="ShowSiblingFiles"
+                class="com.github.ajaymamtora.ijsiblingfileselector.ShowSiblingFilesAction"
+                text="Show Sibling Files"
+                description="Show a list of files in the current directory">
+            <keyboard-shortcut first-keystroke="meta alt P" keymap="$default"/>
         </action>
     </actions>
 </idea-plugin>
