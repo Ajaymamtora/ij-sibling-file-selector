@@ -98,15 +98,27 @@ class ShowSiblingFilesAction : AnAction() {
             })
         }
 
+        // Calculate the width needed for the longest filename
+        val fontMetrics = fileList.getFontMetrics(fileList.font)
+        val longestFilename = siblingFiles.maxByOrNull { it.name.length }?.name ?: ""
+
+        // Add some extra width for the icon and padding
+        val fileNameWidth = fontMetrics.stringWidth(longestFilename) + 50
+
+        // Minimum width to prevent tiny popups for short filenames
+        val minWidth = 300
+        val preferredWidth = maxOf(fileNameWidth, minWidth)
+
+        // Create the panel with calculated dimensions
+        val contentPanel = JPanel(BorderLayout()).apply {
+            add(searchField, BorderLayout.NORTH)
+            add(JBScrollPane(fileList), BorderLayout.CENTER)
+            preferredSize = java.awt.Dimension(preferredWidth, 400)
+        }
+
         // Create the popup and store the reference
         popup = JBPopupFactory.getInstance()
-            .createComponentPopupBuilder(
-                JPanel(BorderLayout()).apply {
-                    add(searchField, BorderLayout.NORTH)
-                    add(JBScrollPane(fileList), BorderLayout.CENTER)
-                },
-                searchField
-            )
+            .createComponentPopupBuilder(contentPanel, searchField)
             .setTitle("Select Sibling File")
             .setResizable(true)
             .setMovable(true)
