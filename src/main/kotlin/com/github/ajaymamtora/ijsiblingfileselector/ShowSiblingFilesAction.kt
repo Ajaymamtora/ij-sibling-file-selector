@@ -11,6 +11,7 @@ import com.intellij.openapi.vfs.VirtualFile
 import com.intellij.ui.components.JBList
 import com.intellij.ui.components.JBScrollPane
 import com.intellij.ui.components.JBTextField
+import javax.swing.BorderFactory
 import java.awt.BorderLayout
 import java.awt.event.KeyAdapter
 import java.awt.event.KeyEvent
@@ -34,7 +35,7 @@ class ShowSiblingFilesAction : AnAction() {
         }
 
         val fileList = JBList(listModel).apply {
-            cellRenderer = ListCellRenderer { list, value, index, isSelected, _ ->
+            cellRenderer = ListCellRenderer { list, value, _, isSelected, _ ->
                 JLabel(value.name, value.fileType.icon, JLabel.LEFT).apply {
                     isOpaque = true
                     background = if (isSelected) list.selectionBackground else list.background
@@ -111,10 +112,22 @@ class ShowSiblingFilesAction : AnAction() {
 
         // Create the panel with calculated dimensions
         val contentPanel = JPanel(BorderLayout()).apply {
+            // Add padding around components to match JetBrains UI style
+            border = BorderFactory.createEmptyBorder(10, 10, 10, 10)
             add(searchField, BorderLayout.NORTH)
-            add(JBScrollPane(fileList), BorderLayout.CENTER)
+
+            // Add a small gap between the search field and the list
+            val listScrollPane = JBScrollPane(fileList)
+            add(listScrollPane, BorderLayout.CENTER)
+
             preferredSize = java.awt.Dimension(preferredWidth, 400)
         }
+
+        // Style the search field to match IDE look
+        searchField.border = BorderFactory.createCompoundBorder(
+            searchField.border,
+            BorderFactory.createEmptyBorder(5, 5, 5, 5)
+        )
 
         // Create the popup and store the reference
         popup = JBPopupFactory.getInstance()
