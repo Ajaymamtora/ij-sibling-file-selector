@@ -26,7 +26,7 @@ class ShowSiblingFilesAction : AnAction() {
         val directory = currentFile.parent ?: return
 
         val siblingFiles = directory.children
-            .filter { !it.isDirectory }
+            .filter { !it.isDirectory && it != currentFile } // Exclude the current file
             .sortedBy { it.name }
 
         val listModel = DefaultListModel<VirtualFile>().apply {
@@ -71,7 +71,8 @@ class ShowSiblingFilesAction : AnAction() {
                         KeyEvent.VK_DOWN -> {
                             e.consume() // Prevent the search field from handling the event
                             if (listModel.size() > 0) {
-                                val nextIndex = (fileList.selectedIndex + 1).coerceAtMost(listModel.size() - 1)
+                                // Wrap around to the top when reaching the bottom
+                                val nextIndex = (fileList.selectedIndex + 1) % listModel.size()
                                 fileList.selectedIndex = nextIndex
                                 fileList.ensureIndexIsVisible(nextIndex)
                             }
@@ -79,7 +80,8 @@ class ShowSiblingFilesAction : AnAction() {
                         KeyEvent.VK_UP -> {
                             e.consume() // Prevent the search field from handling the event
                             if (listModel.size() > 0) {
-                                val prevIndex = (fileList.selectedIndex - 1).coerceAtLeast(0)
+                                // Wrap around to the bottom when reaching the top
+                                val prevIndex = (fileList.selectedIndex - 1 + listModel.size()) % listModel.size()
                                 fileList.selectedIndex = prevIndex
                                 fileList.ensureIndexIsVisible(prevIndex)
                             }
