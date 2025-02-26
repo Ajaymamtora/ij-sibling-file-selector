@@ -28,8 +28,15 @@ class ShowSiblingFilesAction : AnAction() {
         val currentFile = e.getData(CommonDataKeys.VIRTUAL_FILE) ?: return
         val directory = currentFile.parent ?: return
 
+        // Get only the currently active editor file
+        val activeFile = FileEditorManager.getInstance(project).selectedEditor?.file
+
         val siblingFiles = directory.children
-            .filter { !it.isDirectory && it != currentFile } // Exclude the current file
+            .filter {
+                !it.isDirectory &&
+                        it.path != currentFile.path &&
+                        (activeFile == null || it.path != activeFile.path)
+            }
             .sortedBy { it.name }
 
         val listModel = DefaultListModel<VirtualFile>().apply {
