@@ -54,9 +54,11 @@ class ShowSiblingFilesAction : AnAction() {
             emptyText.text = "Search files..."
             addKeyListener(object : KeyAdapter() {
                 override fun keyReleased(e: KeyEvent) {
-                    // Reset CTRL+W state if CTRL is released
-                    if (e.keyCode == KeyEvent.VK_CONTROL) {
-                        isCtrlWPressed = false
+                    // Reset CTRL+W state if any other key is pressed or if the operation is done
+                    if (e.keyCode != KeyEvent.VK_CONTROL && e.keyCode != KeyEvent.VK_W) {
+                        if (!(isCtrlWPressed && (e.keyCode == KeyEvent.VK_S || e.keyCode == KeyEvent.VK_V))) {
+                            isCtrlWPressed = false
+                        }
                     }
 
                     // Only update search results if it's not a navigation key
@@ -91,6 +93,7 @@ class ShowSiblingFilesAction : AnAction() {
                     if (isCtrlWPressed) {
                         when (e.keyCode) {
                             KeyEvent.VK_S -> {
+                                // S key after CTRL+W (without requiring CTRL to be held)
                                 e.consume()
                                 isCtrlWPressed = false
                                 fileList.selectedValue?.let { selectedFile ->
@@ -100,6 +103,7 @@ class ShowSiblingFilesAction : AnAction() {
                                 return
                             }
                             KeyEvent.VK_V -> {
+                                // V key after CTRL+W (without requiring CTRL to be held)
                                 e.consume()
                                 isCtrlWPressed = false
                                 fileList.selectedValue?.let { selectedFile ->
