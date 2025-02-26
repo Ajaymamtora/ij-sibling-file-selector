@@ -97,7 +97,7 @@ class ShowSiblingFilesAction : AnAction() {
                                 e.consume()
                                 isCtrlWPressed = false
                                 fileList.selectedValue?.let { selectedFile ->
-                                    openFileInSplit(project, selectedFile, true) // true for horizontal split
+                                    openFileInSplit(project, selectedFile, false) // false for vertical split
                                     popup?.dispose()
                                 }
                                 return
@@ -107,7 +107,7 @@ class ShowSiblingFilesAction : AnAction() {
                                 e.consume()
                                 isCtrlWPressed = false
                                 fileList.selectedValue?.let { selectedFile ->
-                                    openFileInSplit(project, selectedFile, false) // false for vertical split
+                                    openFileInSplit(project, selectedFile, true) // true for horizontal split
                                     popup?.dispose()
                                 }
                                 return
