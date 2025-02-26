@@ -17,19 +17,19 @@
 
 <!-- Plugin description -->
 ## Sibling File Selector
-
 A lightweight plugin that allows quick navigation between files in the same directory (sibling files).
-
 ### Features:
-
 * **Quick Navigation:** Easily move between files in the current directory using keyboard shortcuts
 * **File List View:** Quick access to all sibling files through a popup list
-
+* **Current File Exclusion:** The currently focused file is excluded from the selection list
 ### Default Keyboard Shortcuts:
-
 * **⌘⌥→** (Command + Alt + Right): Select next file in directory
 * **⌘⌥←** (Command + Alt + Left): Select previous file in directory
 * **⌘⌥P** (Command + Alt + P): Show list of all sibling files
+### Navigation Options:
+* **Enter:** Open the selected file
+* **\<C-w\>s:** Split window horizontally with the selected file
+* **\<C-w\>v:** Split window vertically with the selected file
 <!-- Plugin description end -->
 
 ## Installation
