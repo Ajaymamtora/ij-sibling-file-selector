@@ -4,6 +4,7 @@ import com.intellij.openapi.actionSystem.AnAction
 import com.intellij.openapi.actionSystem.AnActionEvent
 import com.intellij.openapi.actionSystem.CommonDataKeys
 import com.intellij.openapi.fileEditor.FileEditorManager
+import com.intellij.openapi.fileEditor.ex.FileEditorManagerEx
 import com.intellij.openapi.project.Project
 import com.intellij.openapi.ui.popup.JBPopup
 import com.intellij.openapi.ui.popup.JBPopupFactory
@@ -13,6 +14,7 @@ import com.intellij.ui.components.JBScrollPane
 import com.intellij.ui.components.JBTextField
 import javax.swing.BorderFactory
 import java.awt.BorderLayout
+import java.awt.Dimension
 import java.awt.event.KeyAdapter
 import java.awt.event.KeyEvent
 import javax.swing.DefaultListModel
@@ -46,16 +48,26 @@ class ShowSiblingFilesAction : AnAction() {
         }
 
         var popup: JBPopup? = null
+        var isCtrlWPressed = false
 
         val searchField = JBTextField().apply {
             emptyText.text = "Search files..."
             addKeyListener(object : KeyAdapter() {
                 override fun keyReleased(e: KeyEvent) {
+                    // Reset CTRL+W state if CTRL is released
+                    if (e.keyCode == KeyEvent.VK_CONTROL) {
+                        isCtrlWPressed = false
+                    }
+
                     // Only update search results if it's not a navigation key
                     if (e.keyCode !in arrayOf(
                             KeyEvent.VK_UP,
                             KeyEvent.VK_DOWN,
-                            KeyEvent.VK_ENTER
+                            KeyEvent.VK_ENTER,
+                            KeyEvent.VK_CONTROL,
+                            KeyEvent.VK_W,
+                            KeyEvent.VK_S,
+                            KeyEvent.VK_V
                         )) {
                         val query = text.lowercase()
                         listModel.clear()
@@ -68,6 +80,38 @@ class ShowSiblingFilesAction : AnAction() {
                 }
 
                 override fun keyPressed(e: KeyEvent) {
+                    // Track CTRL+W combination
+                    if (e.isControlDown && e.keyCode == KeyEvent.VK_W) {
+                        isCtrlWPressed = true
+                        e.consume()
+                        return
+                    }
+
+                    // Handle split commands after CTRL+W is pressed
+                    if (isCtrlWPressed) {
+                        when (e.keyCode) {
+                            KeyEvent.VK_S -> {
+                                e.consume()
+                                isCtrlWPressed = false
+                                fileList.selectedValue?.let { selectedFile ->
+                                    openFileInSplit(project, selectedFile, true) // true for horizontal split
+                                    popup?.dispose()
+                                }
+                                return
+                            }
+                            KeyEvent.VK_V -> {
+                                e.consume()
+                                isCtrlWPressed = false
+                                fileList.selectedValue?.let { selectedFile ->
+                                    openFileInSplit(project, selectedFile, false) // false for vertical split
+                                    popup?.dispose()
+                                }
+                                return
+                            }
+                        }
+                    }
+
+                    // Regular navigation keys
                     when (e.keyCode) {
                         KeyEvent.VK_DOWN -> {
                             e.consume() // Prevent the search field from handling the event
@@ -120,7 +164,7 @@ class ShowSiblingFilesAction : AnAction() {
             val listScrollPane = JBScrollPane(fileList)
             add(listScrollPane, BorderLayout.CENTER)
 
-            preferredSize = java.awt.Dimension(preferredWidth, 400)
+            preferredSize = Dimension(preferredWidth, 400)
         }
 
         // Style the search field to match IDE look
@@ -143,5 +187,28 @@ class ShowSiblingFilesAction : AnAction() {
 
     private fun openFile(project: Project, file: VirtualFile) {
         FileEditorManager.getInstance(project).openFile(file, true)
+    }
+
+    private fun openFileInSplit(project: Project, file: VirtualFile, isHorizontal: Boolean) {
+        val fileEditorManager = FileEditorManagerEx.getInstanceEx(project)
+        val currentWindow = fileEditorManager.currentWindow
+
+        // Split the window based on the direction
+        val newWindow = if (isHorizontal) {
+            // SPLIT_HORIZONTAL = 1
+            currentWindow?.split(1, true, file, true)
+        } else {
+            // SPLIT_VERTICAL = 0
+            currentWindow?.split(0, true, file, true)
+        }
+
+        // Ensure the file is opened in the new split
+        if (newWindow != null) {
+            newWindow.setAsCurrentWindow(true)
+            fileEditorManager.openFile(file, focusEditor = true, searchForOpen = true)
+        } else {
+            // Fallback if split fails for some reason
+            openFile(project, file)
+        }
     }
 }
