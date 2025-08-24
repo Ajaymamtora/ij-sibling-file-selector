@@ -1,18 +1,47 @@
-<!-- Plugin Configuration File. Read more: https://plugins.jetbrains.com/docs/intellij/plugin-configuration-file.html -->
+<?xml version="1.0" encoding="UTF-8"?>
 <idea-plugin>
     <id>com.github.ajaymamtora.ijsiblingfileselector</id>
     <name>ij-sibling-file-selector</name>
-    <vendor>ajaymamtora</vendor>
+    <vendor url="https://github.com/ajaymamtora">ajaymamtora</vendor>
+
+    <description><![CDATA[
+        <h2>Sibling File Selector</h2>
+        <p>A lightweight plugin that allows quick navigation between files in the same directory (sibling files).</p>
+
+        <h3>Features:</h3>
+        <ul>
+            <li><b>Quick Navigation:</b> Easily move between files in the current directory using keyboard shortcuts</li>
+            <li><b>File List View:</b> Quick access to all sibling files through a popup list</li>
+        </ul>
+
+        <h3>Default Keyboard Shortcuts:</h3>
+        <ul>
+            <li><b>⌘⌥→</b> (Command + Alt + Right): Select next file in directory</li>
+            <li><b>⌘⌥←</b> (Command + Alt + Left): Select previous file in directory</li>
+            <li><b>⌘⌥P</b> (Command + Alt + P): Show list of all sibling files</li>
+        </ul>
+    ]]></description>
 
     <depends>com.intellij.modules.platform</depends>
 
-    <resource-bundle>messages.MyBundle</resource-bundle>
-
-    <extensions defaultExtensionNs="com.intellij">
-        <toolWindow factoryClass="com.github.ajaymamtora.ijsiblingfileselector.toolWindow.MyToolWindowFactory" id="MyToolWindow"/>
-    </extensions>
-
-    <applicationListeners>
-        <listener class="com.github.ajaymamtora.ijsiblingfileselector.listeners.MyApplicationActivationListener" topic="com.intellij.openapi.application.ApplicationActivationListener"/>
-    </applicationListeners>
+    <actions>
+        <action id="SelectNextFile"
+                class="com.github.ajaymamtora.ijsiblingfileselector.SelectNextFileAction"
+                text="Select Next File"
+                description="Select the next file in the current directory">
+            <keyboard-shortcut first-keystroke="meta alt RIGHT" keymap="$default"/>
+        </action>
+        <action id="SelectPreviousFile"
+                class="com.github.ajaymamtora.ijsiblingfileselector.SelectPreviousFileAction"
+                text="Select Previous File"
+                description="Select the previous file in the current directory">
+            <keyboard-shortcut first-keystroke="meta alt LEFT" keymap="$default"/>
+        </action>
+        <action id="ShowSiblingFiles"
+                class="com.github.ajaymamtora.ijsiblingfileselector.ShowSiblingFilesAction"
+                text="Show Sibling Files"
+                description="Show a list of files in the current directory">
+            <keyboard-shortcut first-keystroke="meta alt P" keymap="$default"/>
+        </action>
+    </actions>
 </idea-plugin>
